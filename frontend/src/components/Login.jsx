@@ -23,17 +23,24 @@ const Login = () => {
         },
         withCredentials: true
       });
-      navigate("/");
-      console.log(res);
-      dispatch(setAuthUser(res.data));
+      if (res?.data) {
+        navigate("/");
+        dispatch(setAuthUser(res.data));
+      }
     } catch (error) {
-      toast.error(error.response.data.message);
-      console.log(error);
+      console.error("Login error:", error);
+      if (error.code === 'ERR_NETWORK') {
+        toast.error("Network error. Please check your connection.");
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
     }
     setUser({
       username: "",
       password: ""
-    })
+    });
   }
   return (
     <div className="min-w-96 mx-auto">
